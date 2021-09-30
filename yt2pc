@@ -1,0 +1,113 @@
+#! /bin/bash
+cd ~/Desktop
+mkdir .YouTubetoPC
+cd .YouTubetoPC
+URL=$(xclip -selection clipboard -o)
+#routine that decides whether string selected is url or not
+ZENURL=false
+URLBEGINS=${URL:0:4}
+if [ -z $URL ]
+then
+ ZENURL=true;
+fi
+if [ $URLBEGINS != "http" ] && [ $URLBEGINS != "www." ]
+then
+ ZENURL=true;
+fi
+if [ $ZENURL = true ]
+then
+ #string selected void or not a url, zenity prompt to enter url
+ URL=$(zenity --entry --height=40 --width=600 --title="YouTube to PC" --text="Enter URL of video or playlist,or just select it from browser address bar: ")
+case $? in
+  0)
+  ;;
+  1)  exit
+  ;;
+esac
+fi
+#decide title of file
+TITLE="$(youtube-dl -e $URL)"
+zenity --question --height=40 --width=600 --title="YouTube to PC" --text="The title of the video you want to download is:
+ '$TITLE'
+ Proceed?"
+ case $? in
+   0)
+   ;;
+   1)  exit
+   ;;
+ esac
+#zenity radiolist, ask for download format
+SUFFIX=$(zenity --list \
+    --radiolist \
+    --title="YouTube to PC" \
+    --text="What do you want to download?" \
+    --column="Select" \
+    --column="Format" \
+    --column="Type" \
+    TRUE mp3 Audio \
+    False mp4 Video \
+    False wav Audio \
+    False flac Audio \
+    False aac Audio \
+    False vorbis Audio \
+    False m4a Audio \
+    False opus Audio \
+    False best Audio \
+    --multiple \
+    --print-column=2 \
+    --separator=^ )
+case $? in
+  0)
+  ;;
+  1)  exit
+  ;;
+esac
+youtube-dl --get-id --get-filename --audio-format mp3 -o '%(title)s' $URL>url.txt
+YOUTUBE=https://www.youtube.com/watch?v=
+
+let LINETOTAL=$(cat url.txt|wc -l)
+let LINETOTALPRINT=$LINETOTAL/2
+URLNUMBER=1
+NAMENUMBER=2
+LINENUMBER=1
+while [ $LINENUMBER -le $LINETOTAL ]
+do
+ LINEURL=$(head -$LINENUMBER url.txt |tail +$LINENUMBER)
+ NAMEURL=$(head -$NAMENUMBER url.txt |tail +$NAMENUMBER)
+ if [ $SUFFIX == "mp3" ] || [ $SUFFIX == "vorbis" ] || [ $SUFFIX == "opus" ] || [ $SUFFIX == "best" ] || [ $SUFFIX == "m4a" ] || [ $SUFFIX == "wav" ] || [ $SUFFIX == "flac" ] || [ $SUFFIX == "aac" ]
+ then
+    youtube-dl -x --newline --audio-format $SUFFIX --audio-quality 0 -o '%(title)s.%(ext)s' $YOUTUBEURL$LINEURL|grep --line-buffered -oP '^\[download\].*?\K([0-9.]+\%|#\d+ of \d)' |
+    zenity --progress --height=40 --width=400 \
+  --title="YouTube to PC" \
+  --text="Downloading  $NAMEURL.$SUFFIX\ \ \  :\ \ $URLNUMBER of $LINETOTALPRINT" \
+  --percentage=0 \
+  --auto-close
+    case $? in
+     0)
+     ;;
+     1)  exit
+     ;;
+    esac
+ else
+    youtube-dl --newline -f best -o '%(title)s.%(ext)s'  $YOUTUBEURL$LINEURL|grep --line-buffered -oP '^\[download\].*?\K([0-9.]+\%|#\d+ of \d)' |
+    zenity --progress --height=40 --width=400 \
+  --title="YouTube to PC" \
+  --text="Downloading  $NAMEURL.$SUFFIX\ \ \  :\ \ $URLNUMBER of $LINETOTALPRINT" \
+  --percentage=0 \
+  --auto-close
+    case $? in
+     0)
+     ;;
+     1)  exit
+     ;;
+    esac
+ fi
+ let URLNUMBER=$URLNUMBER+1
+ let LINENUMBER=$LINENUMBER+2
+ let NAMENUMBER=$NAMENUMBER+2
+done
+rm url.txt
+cd ..
+mv .YouTubetoPC/*.* ~/Desktop/
+rm -r .YouTubetoPC
+zenity --info --height=40 --width=400 --title="YouTube to PC" --icon-name=media-tape --text="Downloading YouTube to PC is complete!" --timeout=3
