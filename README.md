@@ -57,13 +57,7 @@ The instuctions for dowloading youtube-dl (as they are found [here](https://gith
 >This command will update youtube-dl if you have already installed it. See the [pypi page](https://pypi.python.org/pypi/youtube_dl) for more information.
 
 
->
-
-    
-
->
-
-        Alternatively, refer to the [developer instructions](#developer-instructions) for how to check out and work with the git repository. For further options, including PGP signatures, see the [youtube-dl Download Page](https://ytdl-org.github.io/youtube-dl/download.html).
+> Alternatively, refer to the [developer instructions](#developer-instructions) for how to check out and work with the git repository. For further options, including PGP signatures, see the [youtube-dl Download Page](https://ytdl-org.github.io/youtube-dl/download.html).
 
 ---
 
@@ -83,7 +77,7 @@ Other dependencies include xclip and zenity:
 
 * Make YouTube2pc executable:
 
-chmod +x YouTube2pc
+    chmod +x YouTube2pc
 
 ## RUN
 
