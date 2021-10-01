@@ -110,4 +110,4 @@ rm url.txt
 cd ..
 mv .YouTubetoPC/*.* ~/Desktop/
 rm -r .YouTubetoPC
-zenity --info --height=40 --width=400 --title="YouTube to PC" --icon-name=media-tape --text="Downloading YouTube to PC is complete!" --timeout=3
+zenity --info --height=40 --width=400 --title="YouTube to PC" --icon-name=media-tape --text="Downloading YouTube to PC is complete!" 
